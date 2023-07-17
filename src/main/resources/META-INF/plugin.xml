@@ -1,0 +1,40 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.shopee.ShopeeGit</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>ShopeeGit</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="chang.wu@shopee.com" url="https://www.shopee.com">Shopee</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>The plugin is for shopee developer, todo after</description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+
+    </extensions>
+    <actions>
+        <group id="MainMenu.ShopeeGit" text="ShopeeGit" description="ShopeeGit menu">
+            <add-to-group group-id="MainMenu" anchor="before" relative-to-action="WindowMenu"/>
+            <action id="ShopeeGit.NewBranch" class="com.shopee.shopeegit.NewBranchAction" text="New Branch" description="New branch" />
+            <action id="ShopeeGit.Pull" class="git4idea.actions.GitPull" text="Pull..." description="Git pull" />
+            <action id="ShopeeGit.Commit" class="com.shopee.shopeegit.CommitAction" text="Commit..." description="Git commit" />
+            <action id="ShopeeGit.Push" class="com.shopee.shopeegit.PushAction" text="Push..." description="Git push" />
+        </group>
+<!--        <action id="com.shopee.shopeegit.HelloWorldAction" class="com.shopee.shopeegit.HelloWorldAction"-->
+<!--                text="HelloWorldAction" description="HelloWorldAction">-->
+<!--            <add-to-group group-id="NewGroup" anchor="first"/>-->
+<!--        </action>-->
+    </actions>
+</idea-plugin>
