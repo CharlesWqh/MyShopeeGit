@@ -25,16 +25,17 @@
 
     </extensions>
     <actions>
+        <!--        <action id="com.shopee.shopeegit.HelloWorldAction" class="com.shopee.shopeegit.HelloWorldAction"-->
+        <!--                text="HelloWorldAction" description="HelloWorldAction">-->
+        <!--            <add-to-group group-id="NewGroup" anchor="first"/>-->
+        <!--        </action>-->
+
         <group id="MainMenu.ShopeeGit" text="ShopeeGit" description="ShopeeGit menu">
             <add-to-group group-id="MainMenu" anchor="before" relative-to-action="WindowMenu"/>
-            <action id="ShopeeGit.NewBranch" class="com.shopee.shopeegit.NewBranchAction" text="New Branch" description="New branch" />
-            <action id="ShopeeGit.Pull" class="git4idea.actions.GitPull" text="Pull..." description="Git pull" />
+            <action id="ShopeeGit.NewBranch" class="com.shopee.shopeegit.NewBranchActionKt" text="New Branch" description="New branch" />
+            <action id="ShopeeGit.Pull" class="com.shopee.shopeegit.PullAction" text="Pull..." description="Git pull" />
             <action id="ShopeeGit.Commit" class="com.shopee.shopeegit.CommitAction" text="Commit..." description="Git commit" />
             <action id="ShopeeGit.Push" class="com.shopee.shopeegit.PushAction" text="Push..." description="Git push" />
         </group>
-<!--        <action id="com.shopee.shopeegit.HelloWorldAction" class="com.shopee.shopeegit.HelloWorldAction"-->
-<!--                text="HelloWorldAction" description="HelloWorldAction">-->
-<!--            <add-to-group group-id="NewGroup" anchor="first"/>-->
-<!--        </action>-->
     </actions>
 </idea-plugin>

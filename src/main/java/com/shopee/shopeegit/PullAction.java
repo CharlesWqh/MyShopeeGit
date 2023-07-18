@@ -7,16 +7,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import git4idea.repo.GitRepositoryManager;
 import git4idea.actions.GitPull;
+import org.jetbrains.annotations.NotNull;
 
-public class PullAction extends AnAction {
+public class PullAction extends GitPull {
     @Override
-    public void actionPerformed(AnActionEvent event) {
-        Project project = event.getData(PlatformDataKeys.PROJECT);
-        var repositoryManager = GitRepositoryManager.getInstance(project);
-        Messages.showInputDialog(
-                project,
-                "What is your name?",
-                "Input your name",
-                Messages.getQuestionIcon());
+    public void actionPerformed(@NotNull AnActionEvent event) {
+        super.actionPerformed(event);
     }
 }
