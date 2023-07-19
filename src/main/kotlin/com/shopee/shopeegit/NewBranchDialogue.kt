@@ -46,6 +46,7 @@ class NewBranchDialogue @JvmOverloads constructor(private val project: Project,
     private var test = true
     private var uat = true
     private var master = false
+    private var currentBranch = initialName.orEmpty()
     private var branchName = initialName.orEmpty()
     private val validator = GitRefNameValidator.getInstance()
 
@@ -54,10 +55,6 @@ class NewBranchDialogue @JvmOverloads constructor(private val project: Project,
     init {
         title = dialogTitle
         setOKButtonText(operation.text)
-        val testConflict = conflictsWithRemoteBranch(repositories, "origin/test")
-        test = testConflict != null && repositories.getCommonCurrentBranch() != "test"
-        val uatConflict = conflictsWithRemoteBranch(repositories, "origin/uat")
-        uat = uatConflict != null && repositories.getCommonCurrentBranch() != "uat"
         init()
     }
 
@@ -89,18 +86,17 @@ class NewBranchDialogue @JvmOverloads constructor(private val project: Project,
             cell(testBox)
                 .bindSelected(::test)
                 .applyToComponent {
-                    isEnabled = test
+                    isEnabled = currentBranch != "test"
                 }.component
             cell(uatBox)
                 .bindSelected(::uat)
                 .applyToComponent {
-                    isEnabled = uat
+                    isEnabled = currentBranch != "uat"
                 }.component
             cell(masterBox)
                 .bindSelected(::master)
                 .applyToComponent {
-                    val conflict = conflictsWithRemoteBranch(repositories, "origin/master")
-                    isEnabled = conflict != null && repositories.getCommonCurrentBranch() != "master"
+                    isEnabled = currentBranch != "master"
                 }.component
         }
     }
