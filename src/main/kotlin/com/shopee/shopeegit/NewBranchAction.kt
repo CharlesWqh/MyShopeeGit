@@ -3,7 +3,6 @@ package com.shopee.shopeegit
 import com.intellij.dvcs.getCommonCurrentBranch
 import com.intellij.dvcs.ui.DvcsBundle
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -13,9 +12,11 @@ import com.intellij.openapi.vcs.VcsNotifier
 import git4idea.GitNotificationIdsHolder
 import git4idea.GitUtil
 import git4idea.GitVcs
-import git4idea.actions.branch.GitBranchActionsUtil.getRepositoriesForTopLevelActions
+import git4idea.actions.GitRepositoryAction
+import git4idea.branch.GitBranchUtil
 import git4idea.branch.GitBrancher
 import git4idea.fetch.GitFetchSupport
+import git4idea.repo.GitRepository
 import git4idea.repo.GitRepositoryManager
 
 class NewBranchActionKt
@@ -23,10 +24,17 @@ class NewBranchActionKt
     DvcsBundle.messagePointer("new.branch.action.description"),
     AllIcons.General.Add) {
 
-    private val TOP_LEVEL_ACTION_PLACE = ActionPlaces.getPopupPlace("GitBranchesPopup.TopLevel.Branch.Actions")
-
     override fun actionPerformed(e: AnActionEvent) {
-        val repositories = getRepositoriesForTopLevelActions(e) { it.place == TOP_LEVEL_ACTION_PLACE }
+        val vcs = GitVcs.getInstance(e.project!!)
+        val roots = GitRepositoryAction.getGitRoots(e.project!!, vcs)
+        if (roots.isNullOrEmpty()) return
+        val selectedRepo = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
+        val defaultRoot = selectedRepo?.root ?: roots[0]
+        val repoManager = GitRepositoryManager.getInstance(e.project!!)
+        val repository = repoManager.getRepositoryForFileQuick(defaultRoot)
+
+        val repositories = arrayListOf<GitRepository>()
+        repositories.add(repository!!)
         val currentBranch = repositories.getCommonCurrentBranch()
         val options = NewBranchDialogue(e.project!!, repositories, GitUtil.HEAD, currentBranch).showAndGetOptions()
         if (options != null) {
@@ -49,22 +57,18 @@ class NewBranchActionKt
                         remoteBranchNames.add("master")
                     }
                     if (remoteBranchNames.isNotEmpty()) {
-                        val repoManager = GitRepositoryManager.getInstance(e.project!!)
-                        val repository = repoManager.getRepositoryForFileQuick(e.project!!.workspaceFile)
-                        if (repository != null) {
-                            for (remoteBranch in repository.info.remoteBranchesWithHashes) {
-                                val remoteBranchName = remoteBranch.key.nameForRemoteOperations
-                                if (remoteBranchNames.contains(remoteBranchName)) {
-                                    val localBranchName = options.name + "_" + remoteBranchName
-                                    val fetchResult = fetchSupport.fetch(repository, remoteBranch.key.remote,
-                                        "$remoteBranchName:$localBranchName")
-                                    try {
-                                        fetchResult.throwExceptionIfFailed()
-                                        successfullyUpdated.add(localBranchName)
-                                    }
-                                    catch (ignored: VcsException) {
-                                        fetchResult.showNotificationIfFailed(MyGitBundle.message("branches.create.failed"))
-                                    }
+                        for (remoteBranch in repository.info.remoteBranchesWithHashes) {
+                            val remoteBranchName = remoteBranch.key.nameForRemoteOperations
+                            if (remoteBranchNames.contains(remoteBranchName)) {
+                                val localBranchName = options.name + "_" + remoteBranchName
+                                val fetchResult = fetchSupport.fetch(repository, remoteBranch.key.remote,
+                                    "$remoteBranchName:$localBranchName")
+                                try {
+                                    fetchResult.throwExceptionIfFailed()
+                                    successfullyUpdated.add(localBranchName)
+                                }
+                                catch (ignored: VcsException) {
+                                    fetchResult.showNotificationIfFailed(MyGitBundle.message("branches.create.failed"))
                                 }
                             }
                         }
