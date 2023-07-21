@@ -1,4 +1,4 @@
-package com.shopee.shopeegit
+package com.shopee.shopeegit.action
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsNotifier
 import com.intellij.openapi.vfs.VirtualFile
+import com.shopee.shopeegit.MyGitBundle
 import git4idea.GitNotificationIdsHolder
 import git4idea.GitVcs
 import git4idea.actions.GitRepositoryAction
@@ -30,7 +31,8 @@ class PullActionKt : AnAction() {
         val repoManager = GitRepositoryManager.getInstance(e.project!!)
         val repository = repoManager.getRepositoryForFileQuick(defaultRoot)
         if (repository != null) {
-            GitVcs.runInBackground(object : Task.Backgroundable(e.project!!, MyGitBundle.message("branches.pull.process"), true) {
+            GitVcs.runInBackground(object : Task.Backgroundable(e.project!!,
+                MyGitBundle.message("branches.pull.process"), true) {
                 private val failPulled = arrayListOf<String>()
 
                 override fun run(indicator: ProgressIndicator) {
@@ -76,9 +78,12 @@ class PullActionKt : AnAction() {
                     if (failPulled.isNotEmpty()) {
                         VcsNotifier.getInstance(project).notifyError(
                             GitNotificationIdsHolder.PULL_FAILED, "",
-                            MyGitBundle.message("branches.pull.failed.title",
+                            MyGitBundle.message(
+                                "branches.pull.failed.title",
                                 failPulled.size,
-                                failPulled.joinToString("\n")))
+                                failPulled.joinToString("\n")
+                            )
+                        )
                     }
                 }
             })

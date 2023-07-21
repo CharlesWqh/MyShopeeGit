@@ -1,4 +1,4 @@
-package com.shopee.shopeegit
+package com.shopee.shopeegit.action
 
 import com.intellij.dvcs.getCommonCurrentBranch
 import com.intellij.dvcs.ui.DvcsBundle
@@ -9,6 +9,8 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsNotifier
+import com.shopee.shopeegit.MyGitBundle
+import com.shopee.shopeegit.NewBranchDialogue
 import git4idea.GitNotificationIdsHolder
 import git4idea.GitUtil
 import git4idea.GitVcs
@@ -42,7 +44,8 @@ class NewBranchActionKt
             val fetchSupport = GitFetchSupport.fetchSupport(e.project!!)
             brancher.checkoutNewBranchStartingFrom(options.name, GitUtil.HEAD, repositories, null)
 
-            GitVcs.runInBackground(object : Task.Backgroundable(e.project!!, MyGitBundle.message("branches.creating.process"), true) {
+            GitVcs.runInBackground(object : Task.Backgroundable(e.project!!,
+                MyGitBundle.message("branches.creating.process"), true) {
                 private val successfullyUpdated = arrayListOf<String>()
 
                 override fun run(indicator: ProgressIndicator) {
@@ -79,9 +82,12 @@ class NewBranchActionKt
                     if (successfullyUpdated.isNotEmpty()) {
                         VcsNotifier.getInstance(project).notifySuccess(
                             GitNotificationIdsHolder.BRANCHES_UPDATE_SUCCESSFUL, "",
-                            MyGitBundle.message("branches.created.title",
+                            MyGitBundle.message(
+                                "branches.created.title",
                                 successfullyUpdated.size,
-                                successfullyUpdated.joinToString("\n")))
+                                successfullyUpdated.joinToString("\n")
+                            )
+                        )
                     }
                 }
             })
