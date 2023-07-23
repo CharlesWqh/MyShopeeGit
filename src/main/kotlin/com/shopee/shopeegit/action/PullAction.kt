@@ -9,6 +9,7 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsNotifier
 import com.intellij.openapi.vfs.VirtualFile
 import com.shopee.shopeegit.MyGitBundle
+import com.shopee.shopeegit.Utils
 import git4idea.GitNotificationIdsHolder
 import git4idea.GitVcs
 import git4idea.actions.GitRepositoryAction
@@ -19,7 +20,6 @@ import git4idea.commands.GitCommand
 import git4idea.commands.GitLineHandler
 import git4idea.fetch.GitFetchSupport
 import git4idea.repo.GitBranchTrackInfo
-import git4idea.repo.GitRepositoryManager
 
 class PullActionKt : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
@@ -28,8 +28,7 @@ class PullActionKt : AnAction() {
         if (roots.isNullOrEmpty()) return
         val selectedRepo = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
         val defaultRoot = selectedRepo?.root ?: roots[0]
-        val repoManager = GitRepositoryManager.getInstance(e.project!!)
-        val repository = repoManager.getRepositoryForFileQuick(defaultRoot)
+        val repository = Utils.getDefaultGitRepository(e)
         if (repository != null) {
             GitVcs.runInBackground(object : Task.Backgroundable(e.project!!,
                 MyGitBundle.message("branches.pull.process"), true) {

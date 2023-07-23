@@ -11,15 +11,13 @@ import com.intellij.openapi.vcs.VcsException
 import com.intellij.openapi.vcs.VcsNotifier
 import com.shopee.shopeegit.MyGitBundle
 import com.shopee.shopeegit.NewBranchDialogue
+import com.shopee.shopeegit.Utils
 import git4idea.GitNotificationIdsHolder
 import git4idea.GitUtil
 import git4idea.GitVcs
-import git4idea.actions.GitRepositoryAction
-import git4idea.branch.GitBranchUtil
 import git4idea.branch.GitBrancher
 import git4idea.fetch.GitFetchSupport
 import git4idea.repo.GitRepository
-import git4idea.repo.GitRepositoryManager
 
 class NewBranchActionKt
     : DumbAwareAction(DvcsBundle.messagePointer("new.branch.action.text.with.ellipsis"),
@@ -27,14 +25,7 @@ class NewBranchActionKt
     AllIcons.General.Add) {
 
     override fun actionPerformed(e: AnActionEvent) {
-        val vcs = GitVcs.getInstance(e.project!!)
-        val roots = GitRepositoryAction.getGitRoots(e.project!!, vcs)
-        if (roots.isNullOrEmpty()) return
-        val selectedRepo = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
-        val defaultRoot = selectedRepo?.root ?: roots[0]
-        val repoManager = GitRepositoryManager.getInstance(e.project!!)
-        val repository = repoManager.getRepositoryForFileQuick(defaultRoot)
-
+        val repository = Utils.getDefaultGitRepository(e)
         val repositories = arrayListOf<GitRepository>()
         repositories.add(repository!!)
         val currentBranch = repositories.getCommonCurrentBranch()

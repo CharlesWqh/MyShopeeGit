@@ -1,9 +1,16 @@
 package com.shopee.shopeegit.commit;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+import git4idea.GitVcs;
+import git4idea.actions.GitRepositoryAction;
+import git4idea.branch.GitBranchUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Damien Arrachequesne
@@ -33,9 +40,5 @@ public class CommitPanel {
     private void restoreValuesFromParsedCommitMessage(CommitMessage commitMessage) {
         longDescription.setText(commitMessage.getLongDescription());
         closedIssues.setText(commitMessage.getClosedIssues());
-    }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
     }
 }

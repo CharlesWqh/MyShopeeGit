@@ -2,7 +2,6 @@ package com.shopee.shopeegit
 
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.dvcs.getCommonCurrentBranch
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -183,11 +182,10 @@ class NewBranchDialogue @JvmOverloads constructor(private val project: Project,
         false
     ), DumbAware {
         override fun getValues(parameters: CompletionParameters, prefix: String, result: CompletionResultSet): Collection<String> {
-            if (parameters.isAutoPopup) {
-                return localDirectories
-            }
-            else {
-                return allSuggestions
+            return if (parameters.isAutoPopup) {
+                localDirectories
+            } else {
+                allSuggestions
             }
         }
     }

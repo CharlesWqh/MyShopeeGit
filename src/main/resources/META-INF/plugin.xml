@@ -28,7 +28,7 @@
         <group id="MainMenu.ShopeeGit" text="ShopeeGit" description="ShopeeGit menu">
             <add-to-group group-id="MainMenu" anchor="before" relative-to-action="WindowMenu"/>
             <action id="ShopeeGit.Commit" class="com.intellij.openapi.vcs.actions.commit.CommonCheckinProjectAction" icon="AllIcons.Actions.Commit" text="Commit..." description="Git commit" />
-            <action id="ShopeeGit.Push" class="com.shopee.shopeegit.action.PushActionKt" text="Push..." description="Git push" />
+            <action id="ShopeeGit.Push" class="com.shopee.shopeegit.action.PushActionKt" icon="AllIcons.Vcs.Push" text="Push..." description="Git push" />
             <action id="ShopeeGit.Pull" class="com.shopee.shopeegit.action.PullActionKt" text="Pull..." description="Git pull" />
             <action id="ShopeeGit.NewBranch" class="com.shopee.shopeegit.action.NewBranchActionKt" text="New Branch" description="New branch" />
         </group>

@@ -1,9 +1,5 @@
 package com.shopee.shopeegit.commit;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
-
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -89,5 +85,9 @@ class CommitMessage {
 
     public String getClosedIssues() {
         return closedIssues;
+    }
+
+    public void setClosedIssues(String s) {
+        this.closedIssues = s;
     }
 }
