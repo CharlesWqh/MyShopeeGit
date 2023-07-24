@@ -1,5 +1,6 @@
 package com.shopee.shopeegit.commit;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.apache.commons.lang.StringUtils.*;
@@ -9,8 +10,9 @@ import static org.apache.commons.lang.StringUtils.*;
  */
 class CommitMessage {
     public static final String ISSUE_TITLE_FORMAT = "[IssueNo]:";
-    public static final String DESCRIPTION_TITLE_FORMAT = "[Description]:";
-
+    public static final String DESCRIPTION_TITLE_FORMAT = "[%s] :";
+    public static final Pattern CHANGE_TYPE_PATTERN = Pattern.compile("^\\[([a-z]+)\\] :(.+)");
+    private ChangeType changeType;
     private String longDescription, closedIssues;
 
     private CommitMessage() {
@@ -18,7 +20,8 @@ class CommitMessage {
         this.closedIssues = "";
     }
 
-    public CommitMessage(String longDescription, String closedIssues) {
+    public CommitMessage(ChangeType changeType, String longDescription, String closedIssues) {
+        this.changeType = changeType;
         this.longDescription = longDescription;
         this.closedIssues = closedIssues;
     }
@@ -26,7 +29,6 @@ class CommitMessage {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-
         if (isNotBlank(closedIssues)) {
             builder
                     .append(ISSUE_TITLE_FORMAT)
@@ -36,7 +38,7 @@ class CommitMessage {
         if (isNotBlank(longDescription)) {
             builder
                     .append(System.lineSeparator())
-                    .append(DESCRIPTION_TITLE_FORMAT)
+                    .append(String.format(DESCRIPTION_TITLE_FORMAT, changeType.label()))
                     .append(formatDescription(longDescription));
         }
 
@@ -46,10 +48,7 @@ class CommitMessage {
     private String formatDescription(String longDescription) {
         String trimmed = longDescription.trim();
         Pattern p1 = Pattern.compile("(\r?\n(\\s)+)");
-        String str1 = p1.matcher(trimmed).replaceAll("");
-//        Pattern p2 = Pattern.compile("((\\s)+)\r?\n");
-//        String str2 = p2.matcher(str1).replaceAll("");
-        return str1.replaceAll(System.lineSeparator(), ",");
+        return p1.matcher(trimmed).replaceAll(",");
     }
 
     private String formatClosedIssue(String closedIssue) {
@@ -67,16 +66,21 @@ class CommitMessage {
                 int issueIndex = lineString.indexOf(ISSUE_TITLE_FORMAT);
                 if (issueIndex >= 0) {
                     commitMessage.closedIssues = lineString.substring(issueIndex + length(ISSUE_TITLE_FORMAT));
-                }
-                int descIndex = lineString.indexOf(DESCRIPTION_TITLE_FORMAT);
-                if (descIndex >= 0) {
-                    commitMessage.longDescription = lineString.substring(descIndex + length(DESCRIPTION_TITLE_FORMAT));
+                } else {
+                    Matcher matcher = CHANGE_TYPE_PATTERN.matcher(lineString);
+                    if (!matcher.find()) return commitMessage;
+                    commitMessage.changeType = ChangeType.valueOf(matcher.group(1).toUpperCase());
+                    commitMessage.longDescription = matcher.group(2);
                 }
             }
 
         } catch (RuntimeException ignored) {}
 
         return commitMessage;
+    }
+
+    public ChangeType getChangeType() {
+        return changeType;
     }
 
     public String getLongDescription() {
