@@ -14,8 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public final class Utils {
-    private final static Utils INSTANCE = new Utils();
-
     private Utils() {}
 
     public static GitRepository getDefaultGitRepository(@NotNull AnActionEvent actionEvent) {
