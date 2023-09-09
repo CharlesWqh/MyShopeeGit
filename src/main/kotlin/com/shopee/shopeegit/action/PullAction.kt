@@ -54,7 +54,7 @@ class PullActionKt : AnAction() {
                                 gitPull(project, defaultRoot, branchTracks)
                             }
                             catch (ignored: VcsException) {
-                                failPulled.add(localBranchName)
+                                failPulled.add(ignored.message)
                             }
                         }
                         if (currentBranch == localBranchName) {
@@ -68,7 +68,7 @@ class PullActionKt : AnAction() {
                             gitPull(project, defaultRoot, currentBranchTracks)
                         }
                         catch (ignored: VcsException) {
-                            failPulled.add(localBranchName)
+                            failPulled.add(ignored.message)
                         }
                     }
                 }

@@ -81,23 +81,37 @@ class NewBranchDialogue @JvmOverloads constructor(private val project: Project,
         val testBox = JCheckBox(MyGitBundle.message("new.branch.dialog.test.branch.checkbox"))
         val uatBox = JCheckBox(MyGitBundle.message("new.branch.dialog.uat.branch.checkbox"))
         val masterBox = JCheckBox(MyGitBundle.message("new.branch.dialog.master.branch.checkbox"))
+        val allBranchNames = getBranchNameList()
         row {
             cell(testBox)
                 .bindSelected(::test)
                 .applyToComponent {
-                    isEnabled = currentBranch != "test"
+                    isEnabled = true
                 }.component
             cell(uatBox)
                 .bindSelected(::uat)
                 .applyToComponent {
-                    isEnabled = currentBranch != "uat"
+                    isEnabled = true
                 }.component
             cell(masterBox)
                 .bindSelected(::master)
                 .applyToComponent {
-                    isEnabled = currentBranch != "master"
+                    isEnabled = true
                 }.component
         }
+    }
+
+    private fun isBranchExist(branchNames: List<String>, name: String): Boolean {
+        return branchNames.contains(name)
+    }
+
+    private fun getBranchNameList(): List<String> {
+        val localBranches = collectLocalBranchNames()
+        val remoteBranches = collectRemoteBranchNames()
+        val allBranches = mutableSetOf<String>()
+        allBranches += localBranches
+        allBranches += remoteBranches
+        return allBranches.toList()
     }
 
     private fun createBranchNameCompletion(): BranchNamesCompletion {

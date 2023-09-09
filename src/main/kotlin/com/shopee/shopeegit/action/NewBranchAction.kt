@@ -57,6 +57,7 @@ class NewBranchActionKt
                                 val localBranchName = options.name + "_" + remoteBranchName
                                 val fetchResult = fetchSupport.fetch(repository, remoteBranch.key.remote,
                                     "$remoteBranchName:$localBranchName")
+
                                 try {
                                     fetchResult.throwExceptionIfFailed()
                                     successfullyUpdated.add(localBranchName)

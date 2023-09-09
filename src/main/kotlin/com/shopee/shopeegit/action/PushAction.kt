@@ -29,15 +29,11 @@ import com.intellij.vcs.ViewUpdateInfoNotification
 import com.shopee.shopeegit.Utils
 import git4idea.*
 import git4idea.actions.GitRepositoryAction
-import git4idea.branch.GitBranchPair
-import git4idea.branch.GitBranchUtil
-import git4idea.branch.GitBrancher
-import git4idea.branch.GitRebaseParams
+import git4idea.branch.*
 import git4idea.commands.*
 import git4idea.i18n.GitBundle
 import git4idea.merge.*
 import git4idea.rebase.GitHandlerRebaseEditorManager
-import git4idea.rebase.GitRebaseUtils
 import git4idea.repo.GitRepository
 import git4idea.update.*
 import git4idea.util.GitUntrackedFilesHelper
@@ -57,26 +53,37 @@ class PushActionKt : VcsPushAction() {
     private var defaultRepository: GitRepository? = null
 
     override fun actionPerformed(e: AnActionEvent) {
-        // 1.checkout
-        val brancher = GitBrancher.getInstance(e.project!!)
-        brancher.checkout(mergeBranch!!.name, false, listOf(defaultRepository), null)
-        // 2.rebase source branch
-        ProgressManager.getInstance()
-            .run(object : Task.Backgroundable(e.project!!, GitBundle.message("rebase.progress.indicator.title")) {
-                override fun run(indicator: ProgressIndicator) {
-                    val gitVersion = GitVcs.getInstance(project).version
-                    val selectedParams = GitRebaseParams(gitVersion, targetBranch!!.name)
-                    GitRebaseUtils.rebase(project, listOf(defaultRepository), selectedParams, indicator
-                    )
-                }
-            })
-        // 3.merge feature branch
         val vcs = GitVcs.getInstance(e.project!!)
         val roots = GitRepositoryAction.getGitRoots(e.project!!, vcs)
         if (roots.isNullOrEmpty()) return
         val selectedRepo = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
         val defaultRoot = selectedRepo?.root ?: roots[0]
-        mergePerform(e.project!!, defaultRoot)
+        ProgressManager.getInstance()
+            .run(object : Task.Backgroundable(e.project!!, GitBundle.message("branches.checkout")) {
+                override fun run(indicator: ProgressIndicator) {
+                    val branchWorker = GitBranchWorker(project, Git.getInstance(), GitBranchUiHandlerImpl(project, indicator))
+                    // 1.checkout
+                    branchWorker.checkout(mergeBranch!!.name, false, listOf(defaultRepository))
+                }
+
+                override fun onFinished() {
+                    ProgressManager.getInstance()
+                        .run(object : Backgroundable(project, GitBundle.message("rebase.progress.indicator.title")) {
+                            override fun run(indicator: ProgressIndicator) {
+                                val branchWorker = GitBranchWorker(project, Git.getInstance(), GitBranchUiHandlerImpl(project, indicator))
+                                // 2.rebase
+                                branchWorker.merge(targetBranch!!.name, GitBrancher.DeleteOnMergeOption.NOTHING, listOf(defaultRepository))
+                            }
+
+                            override fun onFinished() {
+                                if (!defaultRepository!!.isRebaseInProgress) {
+                                    // 3.merge feature branch
+                                    mergePerform(project, defaultRoot)
+                                }
+                            }
+                        })
+                }
+            })
     }
 
     private fun mergePerform(project: Project, selectedRoot: VirtualFile) {
@@ -87,6 +94,10 @@ class PushActionKt : VcsPushAction() {
 
         val title = GitBundle.message("merging.title", selectedRoot.path)
         object : Task.Backgroundable(project, title, true) {
+            override fun onFinished() {
+                println("merge feature branch")
+            }
+
             override fun run(indicator: ProgressIndicator) {
                 val git = Git.getInstance()
                 val localChangesDetector = GitLocalChangesWouldBeOverwrittenDetector(
@@ -105,7 +116,7 @@ class PushActionKt : VcsPushAction() {
                 val beforeRevision = repository.currentRevision
                 val rebaseEditorManager = Ref.create<GitHandlerRebaseEditorManager>()
                 try {
-                    DvcsUtil.workingTreeChangeStarted(project, getActionName()).use { ignore ->
+                    DvcsUtil.workingTreeChangeStarted(project, getActionName()).use {
                         val result = git.runCommand {
                             val handler = handlerProvider.get()
                             handler.addLineListener(localChangesDetector)
@@ -279,13 +290,13 @@ class PushActionKt : VcsPushAction() {
                 targetBranchName = "origin/master"
             }
         }
-        val defaultRepository = Utils.getDefaultGitRepository(e)
-        targetBranch = defaultRepository.branches.findRemoteBranch(targetBranchName)
-        currentBranch = defaultRepository.branches.findBranchByName(defaultRepository.currentBranch!!.name)
+        defaultRepository = Utils.getDefaultGitRepository(e)
+        targetBranch = defaultRepository!!.branches.findRemoteBranch(targetBranchName)
+        currentBranch = defaultRepository!!.branches.findBranchByName(defaultRepository!!.currentBranch!!.name)
 
         var isEnable = false
         if (currentBranch != null) {
-            mergeBranch = defaultRepository.branches.findBranchByName(currentBranch!!.name +
+            mergeBranch = defaultRepository!!.branches.findBranchByName(currentBranch!!.name +
                     "_" + targetBranch!!.nameForRemoteOperations)
             if (mergeBranch != null) {
                 isEnable = true
