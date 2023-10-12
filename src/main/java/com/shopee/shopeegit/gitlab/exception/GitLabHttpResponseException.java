@@ -1,5 +1,6 @@
-package com.shopee.shopeegit.gitlab;
+package com.shopee.shopeegit.gitlab.exception;
 
+import com.shopee.shopeegit.gitlab.GitLabHttpResponseBody;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 

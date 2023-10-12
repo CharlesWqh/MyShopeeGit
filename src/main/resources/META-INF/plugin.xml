@@ -22,7 +22,7 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
+        <projectService serviceImplementation="com.shopee.shopeegit.gitlab.settings.Settings"/>
     </extensions>
     <actions>
         <group id="MainMenu.ShopeeGit" text="ShopeeGit" description="ShopeeGit menu">

@@ -1,6 +1,7 @@
 package com.shopee.shopeegit.gitlab;
 
-import com.github.novotnyr.idea.gitlab.http.HttpClientFactory;
+import com.shopee.shopeegit.gitlab.exception.*;
+import com.shopee.shopeegit.http.HttpClientFactory;
 import com.google.gson.Gson;
 import okhttp3.Call;
 import okhttp3.HttpUrl;
@@ -63,7 +64,7 @@ public class GitLab {
                     protected void onRawResponseBody(Response response, String rawResponseBodyString) {
                         if (response.code() != 200) {
                             String contentType = getContentType(response);
-                            result.completeExceptionally(new GitLabHttpResponseException(response.code(), response.message(), rawResponseBodyString, contentType));
+                            result.completeExceptionally(new AccessDeniedException.GitLabHttpResponseException(response.code(), response.message(), rawResponseBodyString, contentType));
                         } else {
                             super.onRawResponseBody(response, rawResponseBodyString);
                         }
@@ -87,11 +88,6 @@ public class GitLab {
         Call call = httpClient.newCall(request);
         call.enqueue(JsonHttpResponseCallback.ofList(result, gson));
         return result;
-    }
-
-    public CompletableFuture<List<User>> searchUsers2(String username, int batchSize, CommandExecutor commandExecutor, ProgressIndicator progressIndicator) {
-        SearchUsersGitLabCommand command = new SearchUsersGitLabCommand(this.baseUri, this.privateToken, this.httpClient, this.gson, progressIndicator, username);
-        return commandExecutor.execute(command);
     }
 
     public CompletableFuture<List<User>> searchUsers(String username) {
@@ -169,7 +165,7 @@ public class GitLab {
                 }
                 try (ResponseBody body = response.body()) {
                     if (body == null) {
-                        result.completeExceptionally(new GitLabHttpResponseException(response.code(), response.message(), null, null));
+                        result.completeExceptionally(new AccessDeniedException.GitLabHttpResponseException(response.code(), response.message(), null, null));
                         return;
                     }
                     String json = body.string();
