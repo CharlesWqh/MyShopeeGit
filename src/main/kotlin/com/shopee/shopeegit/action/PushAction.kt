@@ -1,7 +1,9 @@
 package com.shopee.shopeegit.action
 
 import com.intellij.dvcs.DvcsUtil
-import com.intellij.dvcs.push.VcsPushAction
+import com.intellij.dvcs.push.*
+import com.intellij.dvcs.push.ui.VcsPushDialog
+import com.intellij.dvcs.repo.Repository
 import com.intellij.history.Label
 import com.intellij.history.LocalHistory
 import com.intellij.notification.Notification
@@ -15,10 +17,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.util.Ref
-import com.intellij.openapi.vcs.ProjectLevelVcsManager
-import com.intellij.openapi.vcs.VcsBundle
-import com.intellij.openapi.vcs.VcsException
-import com.intellij.openapi.vcs.VcsNotifier
+import com.intellij.openapi.vcs.*
 import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.openapi.vcs.update.AbstractCommonUpdateAction
 import com.intellij.openapi.vcs.update.ActionInfo
@@ -26,6 +25,7 @@ import com.intellij.openapi.vcs.update.UpdatedFiles
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ModalityUiUtil
 import com.intellij.vcs.ViewUpdateInfoNotification
+import com.shopee.shopeegit.PushMergeRequestDialog
 import com.shopee.shopeegit.Utils
 import git4idea.*
 import git4idea.actions.GitRepositoryAction
@@ -43,9 +43,9 @@ import java.util.function.Supplier
 
 class PushActionKt : VcsPushAction() {
     companion object {
-        private const val PUSH_TEST = "Push Test"
-        private const val PUSH_UAT = "Push Uat"
-        private const val PUSH_MASTER = "Push Master"
+        private const val PUSH_TEST = "Quick Merge Test"
+        private const val PUSH_UAT = "Quick Merge Uat"
+        private const val PUSH_MASTER = "Quick Merge Master"
     }
     private var currentBranch: GitBranch? = null
     private var targetBranch: GitRemoteBranch? = null
@@ -63,7 +63,12 @@ class PushActionKt : VcsPushAction() {
                 override fun run(indicator: ProgressIndicator) {
                     val branchWorker = GitBranchWorker(project, Git.getInstance(), GitBranchUiHandlerImpl(project, indicator))
                     // 1.checkout
-                    branchWorker.checkout(mergeBranch!!.name, false, listOf(defaultRepository))
+                    if (mergeBranch == null) {
+                        val mergeBranchName = currentBranch!!.name + "_" + targetBranch!!.nameForRemoteOperations
+                        branchWorker.checkoutNewBranch(mergeBranchName, listOf(defaultRepository))
+                    } else {
+                        branchWorker.checkout(mergeBranch!!.name, false, listOf(defaultRepository))
+                    }
                 }
 
                 override fun onFinished() {
@@ -71,7 +76,7 @@ class PushActionKt : VcsPushAction() {
                         .run(object : Backgroundable(project, GitBundle.message("rebase.progress.indicator.title")) {
                             override fun run(indicator: ProgressIndicator) {
                                 val branchWorker = GitBranchWorker(project, Git.getInstance(), GitBranchUiHandlerImpl(project, indicator))
-                                // 2.rebase
+                                // 2.merge target branch
                                 branchWorker.merge(targetBranch!!.name, GitBrancher.DeleteOnMergeOption.NOTHING, listOf(defaultRepository))
                             }
 
@@ -95,7 +100,7 @@ class PushActionKt : VcsPushAction() {
         val title = GitBundle.message("merging.title", selectedRoot.path)
         object : Task.Backgroundable(project, title, true) {
             override fun onFinished() {
-                println("merge feature branch")
+                PushMergeRequestDialog(project, defaultRepository!!, currentBranch!!.name).show()
             }
 
             override fun run(indicator: ProgressIndicator) {
@@ -294,13 +299,13 @@ class PushActionKt : VcsPushAction() {
         targetBranch = defaultRepository!!.branches.findRemoteBranch(targetBranchName)
         currentBranch = defaultRepository!!.branches.findBranchByName(defaultRepository!!.currentBranch!!.name)
 
-        var isEnable = false
         if (currentBranch != null) {
             mergeBranch = defaultRepository!!.branches.findBranchByName(currentBranch!!.name +
                     "_" + targetBranch!!.nameForRemoteOperations)
-            if (mergeBranch != null) {
-                isEnable = true
-            }
+        }
+        var isEnable = false
+        if (targetBranch != null) {
+            isEnable = true
         }
 
         e.presentation.isEnabled = isEnable
