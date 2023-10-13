@@ -90,39 +90,6 @@ public class GitLab {
         return result;
     }
 
-    public CompletableFuture<List<User>> searchUsers(String username) {
-        Request request = prepareRequest("/users?username=" + username + "&per_page=300&active=true")
-                .build();
-
-        CompletableFuture<List<User>> result = new CompletableFuture<>();
-        Call call = httpClient.newCall(request);
-        call.enqueue(JsonHttpResponseCallback.ofList(result, gson));
-        return result;
-    }
-
-    public CompletableFuture<List<User>> listUsers() {
-        Request request = prepareRequest("/users?per_page=300")
-                .build();
-
-        CompletableFuture<List<User>> result = new CompletableFuture<>();
-
-        Call call = httpClient.newCall(request);
-        call.enqueue(JsonHttpResponseCallback.ofList(result, gson));
-        return result;
-    }
-
-    public CompletableFuture<User> findUserByName(String username) {
-        Request request = prepareRequest("/users?username=" + username)
-                .build();
-
-        CompletableFuture<List<User>> result = new CompletableFuture<>();
-
-        httpClient
-                .newCall(request)
-                .enqueue(JsonHttpResponseCallback.ofList(result, this.gson));
-        return result.thenApply(users -> users.get(0));
-    }
-
     public CompletableFuture<MergeRequestResponse> createMergeRequest(String gitLabProjectId, MergeRequestRequest mergeRequestRequest) {
         return doCreateMergeRequest(ProjectId.of(gitLabProjectId), mergeRequestRequest);
     }

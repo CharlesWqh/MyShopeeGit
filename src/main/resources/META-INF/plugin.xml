@@ -23,9 +23,11 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <projectService serviceImplementation="com.shopee.shopeegit.gitlab.settings.Settings"/>
+        <vcsConfigurableProvider implementation="com.shopee.shopeegit.gitlab.settings.SettingsUi$ConfigurableProvider"/>
+        <notificationGroup id="Shopee GitLab" displayType="BALLOON" />
     </extensions>
     <actions>
-        <group id="MainMenu.ShopeeGit" text="ShopeeGit" description="ShopeeGit menu">
+        <group id="MainMenu.ShopeeGit" text="ShopeeGitLab" description="ShopeeGit menu">
             <add-to-group group-id="MainMenu" anchor="before" relative-to-action="WindowMenu"/>
 <!--            <action id="ShopeeGit.Commit" class="com.intellij.openapi.vcs.actions.commit.CommonCheckinProjectAction" icon="AllIcons.Actions.Commit" text="Commit..." description="Git commit" />-->
             <action id="ShopeeGit.PushTest" class="com.shopee.shopeegit.action.PushActionKt" icon="AllIcons.Vcs.Push" text="Quick Merge Test" />

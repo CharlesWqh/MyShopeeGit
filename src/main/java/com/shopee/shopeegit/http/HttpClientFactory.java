@@ -31,7 +31,6 @@ public class HttpClientFactory {
 
             return new OkHttpClient.Builder()
                     .sslSocketFactory(sslSocketFactory, InsecureTrustManager.INSTANCE)
-                    .hostnameVerifier((s, sslSession) -> true)
                     .build();
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new HttpClientException("Cannot create insecure HTTP client: " + e.getMessage(), e);

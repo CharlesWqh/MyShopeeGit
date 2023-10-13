@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.github.novotnyr.idea.gitlab.quickmr.settings.SettingsUi">
-  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.shopee.shopeegit.gitlab.settings.SettingsUi">
+  <grid id="27dc6" binding="rootPanel" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="10">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="944" height="483"/>
+      <xy x="20" y="20" width="600" height="150"/>
     </constraints>
-    <properties/>
-    <border type="none"/>
+    <properties>
+      <foreground color="-3550496"/>
+    </properties>
+    <border type="line"/>
     <children>
       <component id="ace6d" class="javax.swing.JLabel">
         <constraints>
@@ -26,7 +28,7 @@
       </component>
       <component id="b54a3" class="com.intellij.ui.components.JBPasswordField" binding="accessTokenTextField">
         <constraints>
-          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="3" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -40,9 +42,9 @@
           <text value="Webhook:"/>
         </properties>
       </component>
-      <component id="35102" class="com.intellij.ui.components.JBTextField" binding="targetBranchTextField">
+      <component id="35102" class="com.intellij.ui.components.JBTextField" binding="webhookUrlTextField">
         <constraints>
-          <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="4" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -52,7 +54,7 @@
       </component>
       <component id="51b31" class="com.intellij.ui.components.JBTextField" binding="urlTextField">
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="0" column="1" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -60,7 +62,7 @@
       </component>
       <component id="4878" class="javax.swing.JButton" binding="openAccessTokenUrlButton">
         <constraints>
-          <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Access Token Page"/>
@@ -68,7 +70,7 @@
       </component>
       <component id="471e8" class="javax.swing.JCheckBox" binding="insecureTLSCheckBox" default-binding="true">
         <constraints>
-          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Insecure TLS"/>
@@ -76,7 +78,7 @@
       </component>
       <component id="4082b" class="javax.swing.JButton" binding="validateServerButton">
         <constraints>
-          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Test Connection"/>

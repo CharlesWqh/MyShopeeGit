@@ -39,7 +39,7 @@ public class SettingsUi implements Configurable {
 
     private JBTextField urlTextField;
     private JBPasswordField accessTokenTextField;
-    private JBTextField targetBranchTextField;
+    private JBTextField webhookUrlTextField;
     private JButton validateServerButton;
     private JPanel rootPanel;
     private JButton openAccessTokenUrlButton;
@@ -69,7 +69,7 @@ public class SettingsUi implements Configurable {
     private void bindToComponents(Settings settings) {
         this.urlTextField.setText(settings.getGitLabUri());
         this.accessTokenTextField.setText(settings.getAccessToken());
-        this.targetBranchTextField.setText(settings.getDefaultTargetBranch());
+        this.webhookUrlTextField.setText(settings.getWebhookUrl());
         this.insecureTLSCheckBox.setSelected(settings.isInsecureTls());
     }
 
@@ -110,9 +110,6 @@ public class SettingsUi implements Configurable {
         List<String> validationErrors = new ArrayList<>();
         if (!StringUtils.isNotEmpty(this.urlTextField.getText())) {
             validationErrors.add("Missing GitLab URI");
-        }
-        if (!StringUtils.isNotEmpty(this.targetBranchTextField.getText())) {
-            validationErrors.add("Missing default target branch");
         }
         return validationErrors;
     }
@@ -186,7 +183,7 @@ public class SettingsUi implements Configurable {
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
-        return "GitLab Quick Merge Request";
+        return "Shopee GitLab";
     }
 
     @Nullable
@@ -199,7 +196,7 @@ public class SettingsUi implements Configurable {
     public boolean isModified() {
         boolean unmodified = SettingUtils.equals(this.urlTextField, settings.getGitLabUri())
                 && !isAccessTokenModified()
-                && SettingUtils.equals(this.targetBranchTextField, settings.getDefaultTargetBranch())
+                && SettingUtils.equals(this.webhookUrlTextField, settings.getWebhookUrl())
                 && this.insecureTLSCheckBox.isSelected() == (settings.isInsecureTls())
                 ;
 
@@ -240,7 +237,7 @@ public class SettingsUi implements Configurable {
 
         settings.setGitLabUri(this.urlTextField.getText());
         settings.setAccessToken(String.valueOf(this.accessTokenTextField.getPassword()));
-        settings.setDefaultTargetBranch(this.targetBranchTextField.getText());
+        settings.setWebhookUrl(this.webhookUrlTextField.getText());
         settings.setInsecureTls(this.insecureTLSCheckBox.isSelected());
     }
 
