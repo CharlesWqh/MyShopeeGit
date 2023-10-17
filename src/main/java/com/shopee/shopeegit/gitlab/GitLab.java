@@ -94,10 +94,6 @@ public class GitLab {
         return doCreateMergeRequest(ProjectId.of(gitLabProjectId), mergeRequestRequest);
     }
 
-    public CompletableFuture<MergeRequestResponse> createMergeRequest(long projectId, MergeRequestRequest mergeRequestRequest) {
-        return doCreateMergeRequest(ProjectId.of(projectId), mergeRequestRequest);
-    }
-
     protected CompletableFuture<MergeRequestResponse> doCreateMergeRequest(ProjectId projectId, MergeRequestRequest mergeRequestRequest) {
         String url = this.baseUri + "/projects/" + projectId.getUrlEncoded() + "/merge_requests";
 

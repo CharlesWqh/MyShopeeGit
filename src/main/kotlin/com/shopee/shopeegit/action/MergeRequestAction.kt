@@ -98,7 +98,8 @@ class MergeRequestActionKT : VcsPushAction() {
         val title = GitBundle.message("merging.title", selectedRoot.path)
         object : Task.Backgroundable(project, title, true) {
             override fun onFinished() {
-                PushMergeRequestDialog(project, defaultRepository!!, currentBranch!!.name).show()
+                PushMergeRequestDialog(project, defaultRepository!!, currentBranch!!.name, mergeBranch!!.name,
+                    targetBranch!!.name).show()
             }
 
             override fun run(indicator: ProgressIndicator) {
