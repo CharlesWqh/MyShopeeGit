@@ -85,6 +85,7 @@ class MergeRequestActionKT : VcsPushAction() {
                     if (mergeBranch == null) {
                         val mergeBranchName = currentBranch!!.name + "_" + targetBranch!!.nameForRemoteOperations
                         branchWorker.checkoutNewBranch(mergeBranchName, listOf(defaultRepository))
+                        mergeBranch = defaultRepository!!.branches.findBranchByName(mergeBranchName)
                     } else {
                         branchWorker.checkout(mergeBranch!!.name, false, listOf(defaultRepository))
                     }
