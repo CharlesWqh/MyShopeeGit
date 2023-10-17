@@ -52,7 +52,7 @@ public class GitService {
     }
 
     public boolean isRemoteBranchExist(String branchName) {
-        GitRemoteBranch branch = currentRepo.getBranches().findRemoteBranch(branchName);
+        GitRemoteBranch branch = currentRepo.getBranches().findRemoteBranch("origin/" + branchName);
         return branch != null;
     }
 
@@ -71,16 +71,13 @@ public class GitService {
         return null;
     }
 
-    public static final Pattern pattern = Pattern.compile("(?:git|ssh|https?|git@[-\\w.]+):(//)?(.*?)(\\.git)(/?|#[-\\d\\w._]+?)$");
+    public static final Pattern pattern = Pattern.compile("(?:git|ssh|https?|gitlab@[-\\w.]+):(//)?(.*?)(\\.git)(/?|#[-\\d\\w._]+?)$");
 
     private String getRepoPathWithoutDotGit(String url) {
         Matcher matcher = pattern.matcher(url);
         if (matcher.matches()) {
             String repoId = matcher.group(2);
             if (url.startsWith("http")) {
-                // Let's extract away hostname.
-                // E. g. gitlab.com/example/dummy-project is transformed to
-                // example/dummy-project
                 repoId = repoId.substring(repoId.indexOf("/") + 1);
             }
             return repoId;

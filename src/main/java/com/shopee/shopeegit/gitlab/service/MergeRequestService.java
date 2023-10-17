@@ -61,7 +61,7 @@ public class MergeRequestService {
     }
 
     private String getDescription() {
-        String description = gitService.getLastCommitMessage(myProject).get();
+        String description = gitService.getLastCommitMessageBody(myProject).get();
         return description;
     }
 

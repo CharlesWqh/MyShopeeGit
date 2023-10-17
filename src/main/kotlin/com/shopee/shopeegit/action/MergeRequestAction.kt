@@ -54,8 +54,29 @@ class MergeRequestActionKT : VcsPushAction() {
         val vcs = GitVcs.getInstance(e.project!!)
         val roots = GitRepositoryAction.getGitRoots(e.project!!, vcs)
         if (roots.isNullOrEmpty()) return
-        val selectedRepo = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
-        val defaultRoot = selectedRepo?.root ?: roots[0]
+        defaultRepository = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
+        val defaultRoot = defaultRepository?.root ?: roots[0]
+
+        var targetBranchName = ""
+        when (e.presentation.text) {
+            PUSH_TEST -> {
+                targetBranchName = "origin/test"
+            }
+            PUSH_UAT -> {
+                targetBranchName = "origin/uat"
+            }
+            PUSH_MASTER -> {
+                targetBranchName = "origin/master"
+            }
+        }
+        targetBranch = defaultRepository!!.branches.findRemoteBranch(targetBranchName)
+        currentBranch = defaultRepository!!.branches.findBranchByName(defaultRepository!!.currentBranch!!.name)
+
+        if (currentBranch != null) {
+            mergeBranch = defaultRepository!!.branches.findBranchByName(currentBranch!!.name +
+                    "_" + targetBranch!!.nameForRemoteOperations)
+        }
+
         ProgressManager.getInstance()
             .run(object : Task.Backgroundable(e.project!!, GitBundle.message("branches.checkout")) {
                 override fun run(indicator: ProgressIndicator) {
@@ -99,7 +120,7 @@ class MergeRequestActionKT : VcsPushAction() {
         object : Task.Backgroundable(project, title, true) {
             override fun onFinished() {
                 PushMergeRequestDialog(project, defaultRepository!!, currentBranch!!.name, mergeBranch!!.name,
-                    targetBranch!!.name).show()
+                    targetBranch!!.nameForRemoteOperations).show()
             }
 
             override fun run(indicator: ProgressIndicator) {
@@ -279,34 +300,5 @@ class MergeRequestActionKT : VcsPushAction() {
 
     private fun getActionName(): String {
         return GitBundle.message("merge.action.name")
-    }
-
-    override fun update(e: AnActionEvent) {
-        var targetBranchName = ""
-        when (e.presentation.text) {
-            PUSH_TEST -> {
-                targetBranchName = "origin/test"
-            }
-            PUSH_UAT -> {
-                targetBranchName = "origin/uat"
-            }
-            PUSH_MASTER -> {
-                targetBranchName = "origin/master"
-            }
-        }
-        defaultRepository = Utils.getDefaultGitRepository(e)
-        targetBranch = defaultRepository!!.branches.findRemoteBranch(targetBranchName)
-        currentBranch = defaultRepository!!.branches.findBranchByName(defaultRepository!!.currentBranch!!.name)
-
-        if (currentBranch != null) {
-            mergeBranch = defaultRepository!!.branches.findBranchByName(currentBranch!!.name +
-                    "_" + targetBranch!!.nameForRemoteOperations)
-        }
-        var isEnable = false
-        if (targetBranch != null) {
-            isEnable = true
-        }
-
-        e.presentation.isEnabled = isEnable
     }
 }
