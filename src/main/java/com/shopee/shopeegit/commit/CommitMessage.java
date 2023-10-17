@@ -9,9 +9,9 @@ import static org.apache.commons.lang.StringUtils.*;
  * @author Damien Arrachequesne <damien.arrachequesne@gmail.com>
  */
 class CommitMessage {
-    public static final String ISSUE_TITLE_FORMAT = "[IssueNo]:";
-    public static final String DESCRIPTION_TITLE_FORMAT = "[%s] :";
-    public static final Pattern CHANGE_TYPE_PATTERN = Pattern.compile("^\\[([a-z]+)\\] :(.+)");
+    public static final String ISSUE_TITLE_FORMAT = "[%s]: ";
+    public static final String DESCRIPTION_TITLE_FORMAT = "%s - ";
+    public static final Pattern COMMIT_MESSAGE_PATTERN = Pattern.compile("^\\[([\\w-]+)\\]: (\\w+) - (.+)$");
     private ChangeType changeType;
     private String longDescription, closedIssues;
 
@@ -31,13 +31,11 @@ class CommitMessage {
         StringBuilder builder = new StringBuilder();
         if (isNotBlank(closedIssues)) {
             builder
-                    .append(ISSUE_TITLE_FORMAT)
-                    .append(formatClosedIssue(closedIssues));
+                    .append(String.format(ISSUE_TITLE_FORMAT, formatClosedIssue(closedIssues)));
         }
 
         if (isNotBlank(longDescription)) {
             builder
-                    .append(System.lineSeparator())
                     .append(String.format(DESCRIPTION_TITLE_FORMAT, changeType.label()))
                     .append(formatDescription(longDescription));
         }
@@ -60,20 +58,11 @@ class CommitMessage {
         CommitMessage commitMessage = new CommitMessage();
 
         try {
-            String[] strings = message.split(System.lineSeparator());
-            if (strings.length == 0) return commitMessage;
-            for (String lineString : strings) {
-                int issueIndex = lineString.indexOf(ISSUE_TITLE_FORMAT);
-                if (issueIndex >= 0) {
-                    commitMessage.closedIssues = lineString.substring(issueIndex + length(ISSUE_TITLE_FORMAT));
-                } else {
-                    Matcher matcher = CHANGE_TYPE_PATTERN.matcher(lineString);
-                    if (!matcher.find()) return commitMessage;
-                    commitMessage.changeType = ChangeType.valueOf(matcher.group(1).toUpperCase());
-                    commitMessage.longDescription = matcher.group(2);
-                }
-            }
-
+            Matcher matcher = COMMIT_MESSAGE_PATTERN.matcher(message);
+            if (!matcher.find()) return commitMessage;
+            commitMessage.closedIssues = matcher.group(1);
+            commitMessage.changeType = ChangeType.valueOf(matcher.group(2).toUpperCase());
+            commitMessage.longDescription = matcher.group(3);
         } catch (RuntimeException ignored) {}
 
         return commitMessage;
