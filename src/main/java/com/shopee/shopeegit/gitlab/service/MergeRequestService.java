@@ -15,12 +15,15 @@ import java.util.concurrent.CompletableFuture;
 public class MergeRequestService {
     private final GitService gitService;
 
+    private final String featureBranch;
+
     private final String targetBranch;
 
     private final Project myProject;
 
-    public MergeRequestService(String sourceBranch, String targetBranch, Project myProject, GitRepository currentRepo) {
+    public MergeRequestService(String featureBranch, String sourceBranch, String targetBranch, Project myProject, GitRepository currentRepo) {
         this.gitService = new GitService(myProject, sourceBranch, currentRepo);
+        this.featureBranch = featureBranch;
         this.targetBranch = targetBranch;
         this.myProject = myProject;
     }
@@ -39,7 +42,6 @@ public class MergeRequestService {
         request.setSourceBranch(gitService.getSourceBranch());
         request.setTargetBranch(targetBranch);
         request.setTitle(getTitle());
-        request.setDescription(getDescription());
         request.setRemoveSourceBranch(false);
         return request;
     }
@@ -56,13 +58,7 @@ public class MergeRequestService {
     }
 
     private String getTitle() {
-        String subject = gitService.getLastCommitMessageSubject(myProject).get();
-        return subject;
-    }
-
-    private String getDescription() {
-        String description = gitService.getLastCommitMessageBody(myProject).get();
-        return description;
+        return String.format("[%s]:%s", featureBranch, "merge " + targetBranch);
     }
 
 

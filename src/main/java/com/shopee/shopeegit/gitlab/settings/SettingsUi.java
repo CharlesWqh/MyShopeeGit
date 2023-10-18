@@ -57,7 +57,7 @@ public class SettingsUi implements Configurable {
         this.project = project;
         this.browserLauncher = BrowserLauncher.getInstance();
 
-        this.urlTextField.getEmptyText().setText("https://gitlab.com/api/v4");
+        this.urlTextField.getEmptyText().setText("https://git.garena.com/api/v4");
 
         this.openAccessTokenUrlButton.setIcon(AllIcons.General.Web);
 

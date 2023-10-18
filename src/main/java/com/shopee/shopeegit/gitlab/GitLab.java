@@ -74,22 +74,6 @@ public class GitLab {
         return result;
     }
 
-    public CompletableFuture<List<GitLabProject>> searchProject(String projectName) {
-        String url = this.baseUri + "/projects?search=" + projectName;
-
-        Request request = new Request.Builder()
-                .url(url)
-                .addHeader(PRIVATE_TOKEN_HEADER, this.privateToken)
-                .get()
-                .build();
-
-        CompletableFuture<List<GitLabProject>> result = new CompletableFuture<>();
-
-        Call call = httpClient.newCall(request);
-        call.enqueue(JsonHttpResponseCallback.ofList(result, gson));
-        return result;
-    }
-
     public CompletableFuture<MergeRequestResponse> createMergeRequest(String gitLabProjectId, MergeRequestRequest mergeRequestRequest) {
         return doCreateMergeRequest(ProjectId.of(gitLabProjectId), mergeRequestRequest);
     }

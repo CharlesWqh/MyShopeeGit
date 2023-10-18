@@ -50,7 +50,7 @@ public class PushMergeRequestDialog extends com.intellij.dvcs.push.ui.VcsPushDia
                         throw new RuntimeException(e);
                     }
                 }
-                MergeRequestService mergeRequestService = new MergeRequestService(mergeBranchName, targetBranchName,
+                MergeRequestService mergeRequestService = new MergeRequestService(sourceBranchName, mergeBranchName, targetBranchName,
                         myProject, currentRepo);
                 mergeRequestService.createMergeRequest();
                 GitBranchWorker branchWorker = new GitBranchWorker(myProject, Git.getInstance(), new GitBranchUiHandlerImpl(myProject, indicator));
