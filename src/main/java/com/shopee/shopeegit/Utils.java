@@ -12,6 +12,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class Utils {
     private Utils() {}
@@ -32,5 +34,14 @@ public final class Utils {
             }
         }
         return null;
+    }
+
+    public static final Pattern jiraPattern = Pattern.compile("([a-zA-Z]+-[0-9]+)");
+    public static String getJiraTicketByPattern(String srcName){
+        Matcher matcher = jiraPattern.matcher(srcName);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return srcName;
     }
 }

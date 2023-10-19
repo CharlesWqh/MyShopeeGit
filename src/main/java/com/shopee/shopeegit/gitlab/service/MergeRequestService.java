@@ -1,6 +1,7 @@
 package com.shopee.shopeegit.gitlab.service;
 
 import com.intellij.openapi.project.Project;
+import com.shopee.shopeegit.Utils;
 import com.shopee.shopeegit.gitlab.GitLab;
 import com.shopee.shopeegit.gitlab.MergeRequestRequest;
 import com.shopee.shopeegit.gitlab.MergeRequestResponse;
@@ -58,9 +59,8 @@ public class MergeRequestService {
     }
 
     private String getTitle() {
-        return String.format("[%s]:%s", featureBranch, "merge " + targetBranch);
+        return String.format("[%s]:%s", Utils.getJiraTicketByPattern(featureBranch), "merge " + targetBranch);
     }
-
 
     @NotNull
     protected GitLab createGitLab(Settings settings) {

@@ -27,11 +27,13 @@ public class CreateCommitAction extends AnAction implements DumbAware {
 
         CommitMessage commitMessage = parseExistingCommitMessage(commitPanel);
         GitRepository repository = Utils.getDefaultGitRepository(actionEvent);
+
         if (repository != null) {
+            String issueNo = Utils.getJiraTicketByPattern(Objects.requireNonNull(repository.getCurrentBranch()).getName());
             if (commitMessage == null) {
-                commitMessage = new CommitMessage(ChangeType.FEAT, Objects.requireNonNull(repository.getCurrentBranch()).getName(), "");
+                commitMessage = new CommitMessage(ChangeType.FEAT, issueNo, "");
             } else if (commitMessage.getClosedIssues().equals("")) {
-                commitMessage.setClosedIssues(Objects.requireNonNull(repository.getCurrentBranch()).getName());
+                commitMessage.setClosedIssues(issueNo);
             }
         }
 

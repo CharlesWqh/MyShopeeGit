@@ -34,6 +34,7 @@ public class GitService {
 
     public String getGitLabProjectId() {
         String projectGitUrl = getProjectGitUrl();
+        LOG.debug("###ShopeeGitLab debug### projectGitUrl", projectGitUrl);
         if (projectGitUrl == null) {
             return "";
         }
@@ -47,7 +48,7 @@ public class GitService {
         return null;
     }
 
-    public static final Pattern pattern = Pattern.compile("(?:git|ssh|https?|gitlab@[-\\w.]+):(//)?(.*?)(\\.git)(/?|#[-\\d\\w._]+?)$");
+    public static final Pattern pattern = Pattern.compile("(?:git|ssh|https?|gitlab@[-\\w.]+):(//)?(.*?)(\\.git)?(/?|#[-\\d\\w._]+?)$");
 
     private String getRepoPathWithoutDotGit(String url) {
         Matcher matcher = pattern.matcher(url);
@@ -56,8 +57,10 @@ public class GitService {
             if (url.startsWith("http")) {
                 repoId = repoId.substring(repoId.indexOf("/") + 1);
             }
+            LOG.debug("###ShopeeGitLab debug### repoId", repoId);
             return repoId;
         }
+        LOG.error("###ShopeeGitLab debug### repoId is null");
         return null;
     }
 }
