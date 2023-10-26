@@ -13,7 +13,7 @@
     <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
-    <description>The plugin is for shopee developer, todo after</description>
+    <description>The plugin is for shopee developer, help you to quickly merge requests to gitlab. You can use it on all jetbrains Products, like GoLand, WebStorm, IntelliJ IDEA, PyCharm and  so on. Please upgrade your IDE to version 2022.2 or above</description>
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
