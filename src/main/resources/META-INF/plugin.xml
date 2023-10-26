@@ -22,7 +22,8 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <projectService serviceImplementation="com.shopee.shopeegit.gitlab.settings.Settings"/>
+        <applicationService serviceImplementation="com.shopee.shopeegit.gitlab.settings.Settings"/>
+<!--        <projectService serviceImplementation="com.shopee.shopeegit.gitlab.settings.Settings"/>-->
         <vcsConfigurableProvider implementation="com.shopee.shopeegit.gitlab.settings.SettingsUi$ConfigurableProvider"/>
         <notificationGroup id="Shopee GitLab" displayType="BALLOON" />
     </extensions>

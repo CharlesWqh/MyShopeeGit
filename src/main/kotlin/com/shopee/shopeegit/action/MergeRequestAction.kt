@@ -9,6 +9,7 @@ import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ModalityState
+import com.intellij.openapi.components.service
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
@@ -29,6 +30,7 @@ import git4idea.*
 import git4idea.actions.GitRepositoryAction
 import git4idea.branch.*
 import git4idea.commands.*
+import git4idea.fetch.GitFetchSupport
 import git4idea.i18n.GitBundle
 import git4idea.merge.*
 import git4idea.rebase.GitHandlerRebaseEditorManager
@@ -54,7 +56,7 @@ class MergeRequestActionKT : VcsPushAction() {
         val vcs = GitVcs.getInstance(e.project!!)
         val roots = GitRepositoryAction.getGitRoots(e.project!!, vcs)
         if (roots.isNullOrEmpty()) return
-        defaultRepository = GitBranchUtil.guessRepositoryForOperation(e.project!!, e.dataContext)
+        defaultRepository = GitBranchUtil.getCurrentRepository(e.project!!)
         val defaultRoot = defaultRepository?.root ?: roots[0]
 
         var targetBranchName = ""
@@ -77,9 +79,11 @@ class MergeRequestActionKT : VcsPushAction() {
                     "_" + targetBranch!!.nameForRemoteOperations)
         }
 
+        val fetchSupport = e.project!!.service<GitFetchSupport>()
         ProgressManager.getInstance()
             .run(object : Task.Backgroundable(e.project!!, GitBundle.message("branches.checkout")) {
                 override fun run(indicator: ProgressIndicator) {
+                    fetchSupport.fetch(defaultRepository!!, targetBranch!!.remote)
                     val branchWorker = GitBranchWorker(project, Git.getInstance(), GitBranchUiHandlerImpl(project, indicator))
                     // 1.checkout
                     if (mergeBranch == null) {

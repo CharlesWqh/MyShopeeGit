@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.shopee"
-version = "1.0-SNAPSHOT"
+version = "1.1.4"
 
 repositories {
     mavenCentral()

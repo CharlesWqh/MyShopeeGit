@@ -24,7 +24,7 @@ public final class Utils {
             GitVcs vcs = GitVcs.getInstance(project);
             List<VirtualFile> roots = GitRepositoryAction.getGitRoots(project, vcs);
             if (CollectionUtils.isNotEmpty(roots)) {
-                GitRepository selectedRepo = GitBranchUtil.guessRepositoryForOperation(project, actionEvent.getDataContext());
+                GitRepository selectedRepo = GitBranchUtil.getCurrentRepository(project);
                 VirtualFile defaultRoot = roots.get(0);
                 if (selectedRepo != null) {
                     defaultRoot = selectedRepo.getRoot();
