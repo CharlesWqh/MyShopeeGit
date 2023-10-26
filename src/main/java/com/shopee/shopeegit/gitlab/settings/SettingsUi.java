@@ -1,5 +1,6 @@
 package com.shopee.shopeegit.gitlab.settings;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.shopee.shopeegit.gitlab.GitLab;
 import com.shopee.shopeegit.gitlab.GitLabHttpResponseBody;
 import com.shopee.shopeegit.gitlab.exception.AccessDeniedException;
@@ -215,7 +216,7 @@ public class SettingsUi implements Configurable {
 
     @Override
     public void reset() {
-        this.settings = this.project.getService(Settings.class);
+        this.settings = ApplicationManager.getApplication().getService(Settings.class);
         bindToComponents(settings);
         cacheAccessToken();
     }

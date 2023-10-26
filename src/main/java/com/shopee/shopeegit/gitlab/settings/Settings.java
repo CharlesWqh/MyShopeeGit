@@ -3,9 +3,11 @@ package com.shopee.shopeegit.gitlab.settings;
 import com.intellij.credentialStore.CredentialAttributes;
 import com.intellij.credentialStore.Credentials;
 import com.intellij.ide.passwordSafe.PasswordSafe;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
 @State(name = Settings.NAME, storages = @Storage("gitlab-quickmr.xml"))
@@ -21,7 +23,7 @@ public class Settings implements PersistentStateComponent<Settings.State> {
 
     @Override
     public void loadState(@NotNull State state) {
-        this.state = state;
+        XmlSerializerUtil.copyBean(state, this.state);
     }
 
     public boolean isInitialized() {

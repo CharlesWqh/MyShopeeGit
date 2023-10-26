@@ -1,5 +1,6 @@
 package com.shopee.shopeegit.gitlab.service;
 
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.shopee.shopeegit.Utils;
 import com.shopee.shopeegit.gitlab.GitLab;
@@ -53,7 +54,7 @@ public class MergeRequestService {
     }
 
     public CompletableFuture<MergeRequestResponse> createMergeRequest() throws SourceAndTargetBranchCannotBeEqualException, SettingsNotInitializedException {
-        Settings settings = myProject.getService(Settings.class);
+        Settings settings = ApplicationManager.getApplication().getService(Settings.class);
         MergeRequestRequest request = prepare(settings);
         return submit(gitService.getGitLabProjectId(), request, settings);
     }
