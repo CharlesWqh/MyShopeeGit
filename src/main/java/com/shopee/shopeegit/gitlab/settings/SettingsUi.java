@@ -80,7 +80,8 @@ public class SettingsUi implements Configurable {
             return;
         }
 
-        GitLab gitLab = new GitLab(this.urlTextField.getText(), String.valueOf(accessTokenTextField.getPassword()), insecureTLSCheckBox.isSelected());
+        GitLab gitLab = new GitLab(this.urlTextField.getText(), String.valueOf(accessTokenTextField.getPassword()),
+                String.valueOf(webhookUrlTextField.getText()), insecureTLSCheckBox.isSelected());
                 gitLab.version().thenRun(() -> {
                     JBPopupFactory.getInstance()
                             .createHtmlTextBalloonBuilder("GitLab connection successful", MessageType.INFO, null)

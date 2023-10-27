@@ -5,14 +5,11 @@ import com.intellij.openapi.project.Project;
 import com.shopee.shopeegit.Utils;
 import com.shopee.shopeegit.gitlab.GitLab;
 import com.shopee.shopeegit.gitlab.MergeRequestRequest;
-import com.shopee.shopeegit.gitlab.MergeRequestResponse;
 import com.shopee.shopeegit.gitlab.exception.SettingsNotInitializedException;
 import com.shopee.shopeegit.gitlab.exception.SourceAndTargetBranchCannotBeEqualException;
 import com.shopee.shopeegit.gitlab.settings.Settings;
 import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.CompletableFuture;
 
 public class MergeRequestService {
     private final GitService gitService;
@@ -48,15 +45,15 @@ public class MergeRequestService {
         return request;
     }
 
-    public CompletableFuture<MergeRequestResponse> submit(String gitLabProjectId, MergeRequestRequest mergeRequestRequest, Settings settings) throws SourceAndTargetBranchCannotBeEqualException {
+    public void submit(String gitLabProjectId, MergeRequestRequest mergeRequestRequest, Settings settings) throws SourceAndTargetBranchCannotBeEqualException {
         GitLab gitLab = createGitLab(settings);
-        return gitLab.createMergeRequest(gitLabProjectId, mergeRequestRequest);
+        gitLab.createMergeRequest(gitLabProjectId, mergeRequestRequest);
     }
 
-    public CompletableFuture<MergeRequestResponse> createMergeRequest() throws SourceAndTargetBranchCannotBeEqualException, SettingsNotInitializedException {
+    public void createMergeRequest() throws SourceAndTargetBranchCannotBeEqualException, SettingsNotInitializedException {
         Settings settings = ApplicationManager.getApplication().getService(Settings.class);
         MergeRequestRequest request = prepare(settings);
-        return submit(gitService.getGitLabProjectId(), request, settings);
+        submit(gitService.getGitLabProjectId(), request, settings);
     }
 
     private String getTitle() {
@@ -65,6 +62,6 @@ public class MergeRequestService {
 
     @NotNull
     protected GitLab createGitLab(Settings settings) {
-        return new GitLab(settings.getGitLabUri(), settings.getAccessToken(), settings.isInsecureTls());
+        return new GitLab(settings.getGitLabUri(), settings.getAccessToken(), settings.getWebhookUrl(), settings.isInsecureTls());
     }
 }
