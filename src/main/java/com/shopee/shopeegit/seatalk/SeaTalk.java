@@ -21,7 +21,8 @@ public class SeaTalk {
 
     public void callWebhook(String mergeUrl, String title, String mentionedList) {
         SeaTalkRequest seaTalkRequest = new SeaTalkRequest("text",
-                new SeaTalkContent(mergeUrl + "\n" + title, convertToMentionedList(mentionedList)));
+                new SeaTalkContent("Please pay attention! You have a new merge request pending" + "\n" + mergeUrl + "\n" + title,
+                        convertToMentionedList(mentionedList)));
         CompletableFuture<SeaTalkResponse> result = new CompletableFuture<>();
         Request request = new Request.Builder()
                 .url(webhookUrl)
