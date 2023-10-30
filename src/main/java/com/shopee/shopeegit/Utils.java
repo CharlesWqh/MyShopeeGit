@@ -42,6 +42,6 @@ public final class Utils {
         if (matcher.find()) {
             return matcher.group(1);
         }
-        return srcName;
+        return "";
     }
 }

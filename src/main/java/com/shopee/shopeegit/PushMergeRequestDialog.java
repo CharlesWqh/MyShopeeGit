@@ -4,6 +4,7 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.shopee.shopeegit.gitlab.MergeRequestResponse;
 import com.shopee.shopeegit.gitlab.service.MergeRequestService;
 import git4idea.branch.GitBranchUiHandlerImpl;
 import git4idea.branch.GitBranchWorker;
@@ -13,6 +14,7 @@ import git4idea.repo.GitRepository;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class PushMergeRequestDialog extends com.intellij.dvcs.push.ui.VcsPushDialog {
     private final String sourceBranchName;

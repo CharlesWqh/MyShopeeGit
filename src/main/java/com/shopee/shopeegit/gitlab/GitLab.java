@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class GitLab {
     public static final String PRIVATE_TOKEN_HEADER = "Private-Token";
@@ -31,20 +28,17 @@ public class GitLab {
 
     private String privateToken;
 
-    private String webhookUrl;
-
     private OkHttpClient httpClient;
 
     private Gson gson = new Gson();
 
-    public GitLab(String baseUri, String privateToken, String webhookUrl) {
-        this(baseUri, privateToken, webhookUrl, false);
+    public GitLab(String baseUri, String privateToken) {
+        this(baseUri, privateToken, false);
     }
 
-    public GitLab(String baseUri, String privateToken, String webhookUrl, boolean allowSelfSignedTls) {
+    public GitLab(String baseUri, String privateToken, boolean allowSelfSignedTls) {
         this.baseUri = baseUri;
         this.privateToken = privateToken;
-        this.webhookUrl = webhookUrl;
 
         HttpClientFactory httpClientFactory = HttpClientFactory.getInstance();
         this.httpClient = allowSelfSignedTls ? httpClientFactory.getInsecureHttpClient() : httpClientFactory.getHttpClient();
@@ -80,33 +74,11 @@ public class GitLab {
         return result;
     }
 
-    public void createMergeRequest(String gitLabProjectId, MergeRequestRequest mergeRequestRequest) {
-        MergeRequestResponse result = doCreateMergeRequest(ProjectId.of(gitLabProjectId), mergeRequestRequest);
-        callWebhook(result.getWebUrl(), mergeRequestRequest.getTitle());
+    public CompletableFuture<MergeRequestResponse> createMergeRequest(String gitLabProjectId, MergeRequestRequest mergeRequestRequest) {
+        return doCreateMergeRequest(ProjectId.of(gitLabProjectId), mergeRequestRequest);
     }
 
-    public void callWebhook(String mergeUrl, String title) {
-        SeaTalkRequest seaTalkRequest = new SeaTalkRequest("text", new SeaTalkContent(mergeUrl + "\r\n" + title));
-        CompletableFuture<SeaTalkResponse> result = new CompletableFuture<>();
-        Request request = new Request.Builder()
-                .url(webhookUrl)
-                .post(RequestBody.create(MediaType.parse("application/json"), this.gson.toJson(seaTalkRequest)))
-                .build();
-        this.httpClient.newCall(request)
-                .enqueue(new JsonHttpResponseCallback<>(SeaTalkResponse.class, result, this.gson) {
-                    @Override
-                    protected void onRawResponseBody(Response response, String rawResponseBodyString) {
-                        if (response.code() != 200) {
-                            String contentType = getContentType(response);
-                            result.completeExceptionally(new AccessDeniedException.GitLabHttpResponseException(response.code(), response.message(), rawResponseBodyString, contentType));
-                        } else {
-                            super.onRawResponseBody(response, rawResponseBodyString);
-                        }
-                    }
-                });
-    }
-
-    protected MergeRequestResponse doCreateMergeRequest(ProjectId projectId, MergeRequestRequest mergeRequestRequest) {
+    protected CompletableFuture<MergeRequestResponse> doCreateMergeRequest(ProjectId projectId, MergeRequestRequest mergeRequestRequest) {
         String url = this.baseUri + "/projects/" + projectId.getUrlEncoded() + "/merge_requests";
 
         Request request = new Request.Builder()
@@ -154,12 +126,7 @@ public class GitLab {
                 }
             }
         });
-
-        try {
-            return result.get(20, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            throw new RuntimeException(e);
-        }
+        return result;
     }
 
     @Nullable

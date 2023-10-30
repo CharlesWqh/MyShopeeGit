@@ -18,6 +18,7 @@ import com.intellij.openapi.vcs.VcsConfigurableProvider;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBPasswordField;
 import com.intellij.ui.components.JBTextField;
+import com.shopee.shopeegit.seatalk.SeaTalk;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpResponseException;
 import org.jetbrains.annotations.Nls;
@@ -41,9 +42,13 @@ public class SettingsUi implements Configurable {
     private JBTextField urlTextField;
     private JBPasswordField accessTokenTextField;
     private JBTextField webhookUrlTextField;
+    private JBTextField assigneesTextField;
+    private JBTextField usernameTextField;
+    private JBPasswordField passwordTextField;
     private JButton validateServerButton;
     private JPanel rootPanel;
     private JButton openAccessTokenUrlButton;
+    private JButton webhookButton;
     private JCheckBox insecureTLSCheckBox;
     private Settings settings;
 
@@ -65,6 +70,8 @@ public class SettingsUi implements Configurable {
         this.validateServerButton.addActionListener(this::onValidateServerButtonClicked);
 
         this.openAccessTokenUrlButton.addActionListener(this::onOpenAccessTokenUrlButtonClicked);
+
+        this.webhookButton.addActionListener(this::onTestWebhook);
     }
 
     private void bindToComponents(Settings settings) {
@@ -72,6 +79,9 @@ public class SettingsUi implements Configurable {
         this.accessTokenTextField.setText(settings.getAccessToken());
         this.webhookUrlTextField.setText(settings.getWebhookUrl());
         this.insecureTLSCheckBox.setSelected(settings.isInsecureTls());
+        this.assigneesTextField.setText(settings.getAssignees());
+        this.passwordTextField.setText(settings.getJiraPassword());
+        this.usernameTextField.setText(settings.getJiraUsername());
     }
 
     private void onValidateServerButtonClicked(ActionEvent event) {
@@ -81,7 +91,7 @@ public class SettingsUi implements Configurable {
         }
 
         GitLab gitLab = new GitLab(this.urlTextField.getText(), String.valueOf(accessTokenTextField.getPassword()),
-                String.valueOf(webhookUrlTextField.getText()), insecureTLSCheckBox.isSelected());
+                insecureTLSCheckBox.isSelected());
                 gitLab.version().thenRun(() -> {
                     JBPopupFactory.getInstance()
                             .createHtmlTextBalloonBuilder("GitLab connection successful", MessageType.INFO, null)
@@ -99,6 +109,12 @@ public class SettingsUi implements Configurable {
 
     public JPanel getRootPanel() {
         return rootPanel;
+    }
+
+    private void onTestWebhook(ActionEvent e) {
+        String url = this.webhookUrlTextField.getText();
+        SeaTalk seaTalk = new SeaTalk(url);
+        seaTalk.callWebhook("Test", "Hello World!", "");
     }
 
     private void onOpenAccessTokenUrlButtonClicked(ActionEvent e) {
@@ -180,8 +196,6 @@ public class SettingsUi implements Configurable {
         return fullErrorMessage;
     }
 
-    //-------
-
     @Nls(capitalization = Nls.Capitalization.Title)
     @Override
     public String getDisplayName() {
@@ -198,6 +212,9 @@ public class SettingsUi implements Configurable {
     public boolean isModified() {
         boolean unmodified = SettingUtils.equals(this.urlTextField, settings.getGitLabUri())
                 && !isAccessTokenModified()
+                && SettingUtils.equals(this.assigneesTextField, settings.getAssignees())
+                && SettingUtils.equals(this.usernameTextField, settings.getJiraUsername())
+                && !isJiraPassWordModified()
                 && SettingUtils.equals(this.webhookUrlTextField, settings.getWebhookUrl())
                 && this.insecureTLSCheckBox.isSelected() == (settings.isInsecureTls())
                 ;
@@ -213,6 +230,16 @@ public class SettingsUi implements Configurable {
         }
         int storedAccessTokenHash = storedAccessToken.hashCode();
         return accessTokenHash != storedAccessTokenHash;
+    }
+
+    private boolean isJiraPassWordModified() {
+        int pwdHash = new String(this.passwordTextField.getPassword()).hashCode();
+        String pwd = settings.getJiraPassword();
+        if (pwd == null) {
+            pwd = "";
+        }
+        int storedPwdHash = pwd.hashCode();
+        return pwdHash != storedPwdHash;
     }
 
     @Override
@@ -241,6 +268,9 @@ public class SettingsUi implements Configurable {
         settings.setAccessToken(String.valueOf(this.accessTokenTextField.getPassword()));
         settings.setWebhookUrl(this.webhookUrlTextField.getText());
         settings.setInsecureTls(this.insecureTLSCheckBox.isSelected());
+        settings.setAssignees(this.assigneesTextField.getText());
+        settings.setJiraUsername(this.usernameTextField.getText());
+        settings.setJiraPassword(String.valueOf(this.passwordTextField.getPassword()));
     }
 
     public static class ConfigurableProvider implements VcsConfigurableProvider {

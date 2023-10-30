@@ -10,6 +10,8 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 @State(name = Settings.NAME, storages = @Storage("gitlab-quickmr.xml"))
 public class Settings implements PersistentStateComponent<Settings.State> {
     public static final String NAME = "gitlab-quickmr";
@@ -80,6 +82,29 @@ public class Settings implements PersistentStateComponent<Settings.State> {
         this.state.insecureTls = insecureTls;
     }
 
+    public String getJiraUsername() {
+        return this.state.jiraUsername;
+    }
+
+    public void setJiraUsername(String username) {
+        this.state.jiraUsername = username;
+    }
+
+    public String getJiraPassword() {
+        return this.state.jiraPassword;
+    }
+
+    public void setJiraPassword(String password) {
+        this.state.jiraPassword = password;
+    }
+
+    public String getAssignees() {
+        return this.state.assignees;
+    }
+
+    public void setAssignees(String assignees) {
+        this.state.assignees = assignees;
+    }
 
     private CredentialAttributes getCredentialAttributes() {
         if (getGitLabUri() == null) {
@@ -97,5 +122,8 @@ public class Settings implements PersistentStateComponent<Settings.State> {
 
         public boolean insecureTls;
 
+        public String jiraUsername;
+        public String jiraPassword;
+        public String assignees;
     }
 }

@@ -1,4 +1,4 @@
-package com.shopee.shopeegit.gitlab;
+package com.shopee.shopeegit.seatalk;
 
 public class SeaTalkRequest {
 
