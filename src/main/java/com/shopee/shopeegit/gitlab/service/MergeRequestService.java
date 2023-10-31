@@ -1,5 +1,6 @@
 package com.shopee.shopeegit.gitlab.service;
 
+import com.google.common.base.Strings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.shopee.shopeegit.Utils;
@@ -53,7 +54,9 @@ public class MergeRequestService {
     public void submit(String gitLabProjectId, MergeRequestRequest mergeRequestRequest, Settings settings) throws SourceAndTargetBranchCannotBeEqualException {
         GitLab gitLab = createGitLab(settings);
         CompletableFuture<MergeRequestResponse> result = gitLab.createMergeRequest(gitLabProjectId, mergeRequestRequest);
-
+        if (Strings.isNullOrEmpty(settings.getWebhookUrl())) {
+            return;
+        }
         try {
             MergeRequestResponse response = result.get(20, TimeUnit.SECONDS);
             SeaTalk seaTalk = new SeaTalk(settings.getWebhookUrl());
