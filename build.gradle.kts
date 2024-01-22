@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.shopee"
-version = "1.2.2"
+version = "1.2.3"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,7 @@ dependencies {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2023.2.3")
+    version.set("2023.3.2")
     type.set("GO") // Target IDE Platform
 
     plugins.set(listOf("org.jetbrains.plugins.go", "Git4Idea"))
@@ -36,7 +36,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("222")
-        untilBuild.set("232.*")
+        untilBuild.set("241.*")
     }
 
     signPlugin {

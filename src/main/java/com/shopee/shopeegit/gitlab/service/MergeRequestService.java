@@ -3,10 +3,12 @@ package com.shopee.shopeegit.gitlab.service;
 import com.google.common.base.Strings;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.VcsNotifier;
 import com.shopee.shopeegit.Utils;
 import com.shopee.shopeegit.gitlab.GitLab;
 import com.shopee.shopeegit.gitlab.MergeRequestRequest;
 import com.shopee.shopeegit.gitlab.MergeRequestResponse;
+import com.shopee.shopeegit.gitlab.exception.DuplicateMergeRequestException;
 import com.shopee.shopeegit.gitlab.exception.SettingsNotInitializedException;
 import com.shopee.shopeegit.gitlab.exception.SourceAndTargetBranchCannotBeEqualException;
 import com.shopee.shopeegit.gitlab.settings.Settings;
@@ -62,6 +64,7 @@ public class MergeRequestService {
             SeaTalk seaTalk = new SeaTalk(settings.getWebhookUrl());
             seaTalk.callWebhook(response.getWebUrl(), mergeRequestRequest.getTitle(), settings.getAssignees());
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
+//            VcsNotifier.getInstance(myProject).notifySuccess(BRANCH_OPERATION_SUCCESS, "", message);
             throw new RuntimeException(e);
         }
     }

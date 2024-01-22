@@ -83,6 +83,7 @@ class MergeRequestActionKT : VcsPushAction() {
         ProgressManager.getInstance()
             .run(object : Task.Backgroundable(e.project!!, GitBundle.message("branches.checkout")) {
                 override fun run(indicator: ProgressIndicator) {
+                    // 0.fetch
                     fetchSupport.fetch(defaultRepository!!, targetBranch!!.remote)
                     val branchWorker = GitBranchWorker(project, Git.getInstance(), GitBranchUiHandlerImpl(project, indicator))
                     // 1.checkout

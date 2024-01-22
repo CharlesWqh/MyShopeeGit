@@ -19,7 +19,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBPasswordField;
 import com.intellij.ui.components.JBTextField;
 import com.shopee.shopeegit.seatalk.SeaTalk;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpResponseException;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;

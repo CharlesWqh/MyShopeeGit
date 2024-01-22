@@ -1,6 +1,6 @@
 package com.shopee.shopeegit.gitlab;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +40,7 @@ public class GitLabHttpResponseBody {
         }
         String html = this.body;
         if (this.type == Type.HTML) {
-            html = StringEscapeUtils.escapeHtml(html);
+            html = StringEscapeUtils.escapeHtml4(html);
         }
         if (this.body.length() >= 128) {
             html = html.substring(0, 128) + "...";
